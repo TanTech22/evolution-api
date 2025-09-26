@@ -85,6 +85,12 @@ export class WebhookController extends EventController implements EventControlle
     }
 
     const we = event.replace(/[.-]/gm, '_').toUpperCase();
+    
+    // FILTRO HARDCODED: Disparar webhook apenas para mensagens de áudio nos eventos MESSAGES_UPSERT e SEND_MESSAGE
+    if ((we === 'MESSAGES_UPSERT' || we === 'SEND_MESSAGE') && data?.messageType !== 'audioMessage') {
+      return;
+    }
+    
     const transformedWe = we.replace(/_/gm, '-').toLowerCase();
     const enabledLog = configService.get<Log>('LOG').LEVEL.includes('WEBHOOKS');
     const regex = /^(https?:\/\/)/;
